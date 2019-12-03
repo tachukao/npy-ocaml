@@ -30,11 +30,18 @@ val read_mmap : string -> shared:bool -> packed_array
 val read_mmap1 : string -> shared:bool -> packed_array1
 val read_mmap2 : string -> shared:bool -> packed_array2
 val read_mmap3 : string -> shared:bool -> packed_array3
+
 val read_copy : string -> packed_array
 val read_copy1 : string -> packed_array1
 val read_copy2 : string -> packed_array2
 val read_copy3 : string -> packed_array3
 
+(** [serialise bigarray] returns npy format of genarray [bigarray]. *)
+val serialise : ('a, 'b, Bigarray.c_layout) Bigarray.Genarray.t -> string
+
+(** [deserialise binary] returns a packed bigarray from the binary content of [binary]. *)
+val deserialise : string -> packed_array
+ 
 module Npz : sig
   type in_file
 
@@ -47,8 +54,12 @@ module Npz : sig
 
   val open_out : string -> out_file
 
-  val write :
-    ?suffix:string -> out_file -> string -> ('a, 'b, 'c) Bigarray.Genarray.t -> unit
+  val write
+    :  ?suffix:string
+    -> out_file
+    -> string
+    -> ('a, 'b, 'c) Bigarray.Genarray.t
+    -> unit
 
   val close_out : out_file -> unit
 end
@@ -60,29 +71,29 @@ end
     were equal to the [layout] and [kind] arguments. Otherwise, [to_bigarray]
     returns [None]
 *)
-val to_bigarray :
-     'c Bigarray.layout
+val to_bigarray
+  :  'c Bigarray.layout
   -> ('a, 'b) Bigarray.kind
   -> packed_array
   -> ('a, 'b, 'c) Bigarray.Genarray.t option
 
 (** Same as {!to_bigarray} for [Bigarray.Array1.t] *)
-val to_bigarray1 :
-     'c Bigarray.layout
+val to_bigarray1
+  :  'c Bigarray.layout
   -> ('a, 'b) Bigarray.kind
   -> packed_array1
   -> ('a, 'b, 'c) Bigarray.Array1.t option
 
 (** Same as {!to_bigarray} for [Bigarray.Array2.t] *)
-val to_bigarray2 :
-     'c Bigarray.layout
+val to_bigarray2
+  :  'c Bigarray.layout
   -> ('a, 'b) Bigarray.kind
   -> packed_array2
   -> ('a, 'b, 'c) Bigarray.Array2.t option
 
 (** Same as {!to_bigarray} for [Bigarray.Array3.t} *)
-val to_bigarray3 :
-     'c Bigarray.layout
+val to_bigarray3
+  :  'c Bigarray.layout
   -> ('a, 'b) Bigarray.kind
   -> packed_array3
   -> ('a, 'b, 'c) Bigarray.Array3.t option
